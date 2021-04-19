@@ -1,3 +1,29 @@
-.hello {
-  color: red;
+* {
+  box-sizing: border-box;
+}
+
+#wrapper {
+  margin: 10%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 50px 400px;
+  grid-gap: 10px;
+}
+#header {
+  background-color: #c87676;
+  text-align: center;
+  grid-column: 1 / 4;
+  grid-row: 1;
+}
+
+#sidebar {
+  background-color: #80c876;
+  grid-column: 1;
+  grid-row: 2 / 3;
+}
+
+#main {
+  background-color: #7b80c3;
+  grid-row: 2;
+  grid-column: 2;
 }
