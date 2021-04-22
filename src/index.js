@@ -1,10 +1,17 @@
-import "./style.css";
+import "./css/style.css";
 import loadPage from "./page-loader.js";
-import sampleProject, { createInput } from "./projects";
+import { renderProjects, renderTasks } from "./render";
+import { checkListeners } from "./dom.js"
+import { addSampleProject } from "./logic";
+
 
 loadPage();
-sampleProject();
+addSampleProject();
+renderProjects('.projects', sidebar)
+renderTasks('.tasks', main, 0);
 
-const newProject = document.getElementById('projectBtn');
-newProject.addEventListener('click', () => createInput());
+document.addEventListener('click', (e) => {
+  checkListeners(e)
+})
+
 
