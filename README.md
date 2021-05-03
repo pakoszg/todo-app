@@ -1,2 +1,2 @@
 # todo-app
-Todo app created using javascript
+Simple todo application created using javascriptw with webpack
