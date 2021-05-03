@@ -1,76 +1,126 @@
-import { allProjects, addTaskToProject, project, pushToAllProjects } from "./logic.js"
-
-const createDiv = (name, location, className, id) => {
-    const div = document.createElement('button');
-    div.className = className;
-    div.innerText = name;
-    div.id = id;
-
-    location.appendChild(div);
-}
+import {
+  allProjects,
+  addTaskToProject,
+  project,
+  pushToAllProjects,
+  updateTaskPriority,
+  saveLocalStorage,
+} from './logic.js'
+import { createProjectDiv, createTaskDiv, createPromptDiv } from './dom.js'
 
 export const renderProjects = (selector, location) => {
-    const projectFields = document.querySelectorAll(selector)
-    for (let index = 0; index < projectFields.length; index++) {
-        location.removeChild(projectFields[index]);
-    }
-    for (let index = 0; index < allProjects.length; index++) {
-        const createProject = createDiv(allProjects[index].name, location, "projects", `project${index}`);     
-    }
-};
-
-// how to get the proper project number?
-export const activeProject = (e) => {
-    let activeProject = 0;
-    
-    const id = e.target.id;
-    activeProject = Number(id.slice(7));
-
-    let number = activeProject;
-    console.log(`active project number: ${number}`);
-    console.log(typeof(number));
-
-    return activeProject
+  const projectFields = document.querySelectorAll(selector)
+  for (let index = 0; index < projectFields.length; index++) {
+    location.removeChild(projectFields[index])
+  }
+  for (let index = 0; index < allProjects.length; index++) {
+    createProjectDiv(
+      allProjects[index].name,
+      location,
+      'projects',
+      `project${index}`
+    )
+  }
+  saveLocalStorage()
 }
 
-export const deleteTasks = (selector, location) => {
-    const allFields = document.querySelectorAll(selector)
-    for (let index = 0; index < allFields.length; index++) {
-        location.removeChild(allFields[index]);
-    }
+const deleteTasks = (selector, location) => {
+  const allFields = document.querySelectorAll(selector)
+  for (let index = 0; index < allFields.length; index++) {
+    location.removeChild(allFields[index])
+  }
 }
 
-export const populateTasks = (selector, location, projectNumber) => {
-    const project = allProjects[projectNumber];
-    const projectName = allProjects[projectNumber].name;
-    const taskList = project.taskList
+const populateTasks = (selector, location, projectNumber) => {
+  const project = allProjects[projectNumber]
+  const taskList = project.taskList
 
-    for (let index = 0; index < taskList.length; index++) {
-        const taskName = createDiv(taskList[index].name, location, "tasks", `${projectName}task${index}`);
-    }
+  for (let index = 0; index < taskList.length; index++) {
+    let task = project.taskList[index]
+    createTaskDiv(
+      task.completed,
+      task.name,
+      task.description,
+      task.dueDate,
+      task.priority,
+      `task${index}`
+    )
+  }
 }
 
 export const renderTasks = (selector, location, projectNumber) => {
-    deleteTasks(selector, location);
-    populateTasks(selector, location, projectNumber);
-};
+  deleteTasks(selector, location)
+  populateTasks(selector, location, projectNumber)
+  saveLocalStorage()
+}
 
-const readInput = (selector) => {
-    const input = document.getElementById(selector);
-    const text = input.value;
-    return text;
+export const readTaskInput = (selector) => {
+  const inputName = document.getElementById(`${selector}taskInputTitle`)
+  const inputDescription = document.getElementById(
+    `${selector}taskInputDescription`
+  )
+  const inputDate = document.getElementById(`${selector}taskInputDate`)
+  const inputPrio = document.getElementById(`switch${selector}taskInput`)
+  const name = inputName.value
+  const description = inputDescription.value
+  const date = inputDate.value
+  let priority = 'normal'
+
+  if (inputPrio.childNodes[0].checked === true) {
+    priority = 'low'
+  } else if (inputPrio.childNodes[2].checked === true) {
+    priority = 'normal'
+  } else {
+    priority = 'zhigh'
+  }
+
+  return { name, description, date, priority }
+}
+
+export const readProjectInput = (selector) => {
+  const inputName = document.getElementById(selector)
+  const name = inputName.value
+
+  return { name }
 }
 
 export const pushNewProject = (selector) => {
-    const text = readInput(selector)
-    const newProjectObject = project(text);
-    pushToAllProjects(newProjectObject);
+  const text = readProjectInput(selector).name
+  const newProjectObject = project(text)
+  pushToAllProjects(newProjectObject)
 }
 
 export const pushNewTask = (selector, projectNumber) => {
-    const text = readInput(selector)
-    const newTaskObject = addTaskToProject(projectNumber, text);
+  const name = readTaskInput('').name
+  const description = readTaskInput('').description
+  const date = readTaskInput('').date
+  const priority = readTaskInput('').priority
+
+  addTaskToProject(projectNumber, name, description, date, priority)
 }
 
+export const changePriority = (e, activeProject) => {
+  if (e.target.className === 'low') {
+    const id = e.target.htmlFor
+    let taskNumber = Number(id.slice(7))
+    const className = e.target.className
+    console.log(taskNumber)
+    updateTaskPriority(activeProject, taskNumber, className)
+  } else if (e.target.className === 'normal') {
+    const id = e.target.htmlFor
+    let taskNumber = Number(id.slice(10))
+    const className = e.target.className
+    console.log(taskNumber)
+    updateTaskPriority(activeProject, taskNumber, className)
+  } else {
+    const id = e.target.htmlFor
+    let taskNumber = Number(id.slice(8))
+    const className = e.target.className
+    console.log(taskNumber)
+    updateTaskPriority(activeProject, taskNumber, className)
+  }
+}
 
-
+export const deletePrompt = (item) => {
+  createPromptDiv(item)
+}

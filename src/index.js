@@ -1,17 +1,15 @@
-import "./css/style.css";
-import loadPage from "./page-loader.js";
-import { renderProjects, renderTasks } from "./render";
-import { checkListeners } from "./dom.js"
-import { addSampleProject } from "./logic";
+import './css/style.css'
+import loadPage from './page-loader.js'
+import { checkClickListeners, checkChangeListeners } from './listeners.js'
+import { addSampleProject, loadLocalStorage } from './logic'
 
-
-loadPage();
-addSampleProject();
-renderProjects('.projects', sidebar)
-renderTasks('.tasks', main, 0);
+loadPage()
+loadLocalStorage()
 
 document.addEventListener('click', (e) => {
-  checkListeners(e)
+  checkClickListeners(e)
 })
 
-
+document.addEventListener('change', (e) => {
+  checkChangeListeners(e)
+})

@@ -23,6 +23,8 @@
   "homepage": "https://github.com/pakoszg/todo-app#readme",
   "devDependencies": {
     "css-loader": "^5.2.1",
+    "file-loader": "^6.2.0",
+    "prettier": "^2.2.1",
     "style-loader": "^2.0.0",
     "webpack": "^5.33.2",
     "webpack-cli": "^4.6.0"
